@@ -42,7 +42,7 @@
                 <h3>Pavel Pulec</h3>
                 <ul>
                     <li>linux administrátor @inuits.{cz,be,nl}</li>
-                    <li>Puppet, HA, MongoDB, GlusterFS, Jenkins, Icinga, ELK, RabbitMQ, Apache Storm, HAProxy, Apache, MySQL, ...</li>
+                    <li>Puppet, high-availability, MongoDB, GlusterFS, Jenkins, Icinga, ELK, RabbitMQ, Apache Storm, HAProxy, Apache, MySQL, ...</li>
                     <li>kLfREE.net - síťový administrátor</li>
                 </ul>
                 <img src="./img/inuits_default_logo-nofont.svg" width="15%">
@@ -51,9 +51,6 @@
         </section>
 
         <section>
-            <section>
-                <h2>Proč?</h2>
-            </section>
 
             <section>
                 <h3>Výhody</h3>
@@ -130,7 +127,8 @@ Last login: Thu Mar  1 00:04:21 2018 from proxy.example.com
                 <h3>pssh - parallel ssh program</h3>
                 <ul>
                     <li>neinteraktivní</li>
-                    <li>seznam hostů na příkazové řádce nebo v soboru</li>
+                    <li>seznam hostů na příkazové řádce nebo v souboru</li>
+                    <li>složité zadat heslo pro sudo</li>
                     <li>v2.3.1 (2. 2. 2012)</li>
                     <li>Python 2.4+</li>
                     <li>psshlib - knihovna použitelná ve vlastní aplikaci</li>
@@ -213,7 +211,7 @@ Thu Mar  1 00:42:01 CET 2018
         <section>
 
             <section>
-                <h3>Ansible</h3>
+                <h3>ansible</h3>
                 <ul>
                     <li>konfigurační a orchestrační nástroj</li>
                     <li>neinteraktivní</li>
@@ -223,7 +221,7 @@ Thu Mar  1 00:42:01 CET 2018
             </section>
 
             <section>
-                <h3>Ansible - přepínače</h3>
+                <h3>ansible - přepínače</h3>
                 <table>
                   <thead><tr>
                     <th>Parametr</th>
@@ -285,7 +283,7 @@ Fri Mar  2 08:35:39 CET 2018</code></pre>
             </section>
 
             <section>
-                <h3>2a) Příklad použití Ansiblu - playbook.yaml</h3>
+                <h3>2a) Příklad použití Ansiblu - ansible-playbook</h3>
 <pre><code class="yaml">kayn@t460:~$ cat playbook.yaml 
 ---
 - hosts: all
@@ -295,7 +293,7 @@ Fri Mar  2 08:35:39 CET 2018</code></pre>
             </section>
 
             <section>
-                <h3>2b) Příklad použití Ansiblu - ansible-playbook (2)</h3>
+                <h3>2b) Příklad použití Ansiblu - ansible-playbook</h3>
 <pre><code class="yaml">kayn@t460:~$ ansible-playbook playbook.yaml 
 
 PLAY [all] *********************************************************************
