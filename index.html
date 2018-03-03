@@ -363,38 +363,6 @@ app01.devel                : ok=2    changed=1    unreachable=0    failed=0</cod
 
         <section>
             <section>
-                <h3>cssh - Cluster administration tool</h3>
-                <ul>
-                    <li>plně interaktivní</li>
-                    <li>administrativní konzole + xterm pro každého hosta</li>
-                    <li>ovládání všech, výběru či jednotlivých hostů</li>
-                    <li>nevhodný při použití velkého množství hostů</li>
-                    <li>možnost vkládání ze schránky</li>
-                    <li>definice hostů (~/.clusterssh/clusters nebo /etc/clusters)</li>
-                    <li>v4.13 (27. 12. 2017)</li>
-                </ul>
-            </section>
-
-            <section>
-                <h3>Admnistrační konzole a xtermy cssh</h3>
-                 <img src="./img/cssh.png" width="100%">
-            </section>
-
-            <section>
-                <h3>Hlavní menu administrační konzole cssh</h3>
-                 <img src="./img/cssh_hosts.png" width="60%">
-            </section>
-
-            <section>
-                <h3>Příklad použití cssh</h3>
-<pre><code class="yaml">kayn@t460:~$ cssh --fillscreen --font '12x24' app0{1..3}.devel</code></pre>
-            </section>
-
-        </section>
-
-
-        <section>
-            <section>
                 <h3>pdsh</h3>
                 <ul>
                     <li>varianta rsh (remote shell client)</li>
@@ -458,6 +426,36 @@ PING installfest.cz (147.32.30.201) 56(84) bytes of data.
 --- installfest.cz ping statistics ---
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 18.470/18.470/18.470/0.000 ms</code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h3>cssh - Cluster administration tool</h3>
+                <ul>
+                    <li>plně interaktivní</li>
+                    <li>administrativní konzole + xterm pro každého hosta</li>
+                    <li>ovládání všech, výběru či jednotlivých hostů</li>
+                    <li>nevhodný při použití velkého množství hostů</li>
+                    <li>možnost vkládání ze schránky</li>
+                    <li>definice hostů (~/.clusterssh/clusters nebo /etc/clusters)</li>
+                    <li>v4.13 (27. 12. 2017)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Admnistrační konzole a xtermy cssh</h3>
+                 <img src="./img/cssh.png" width="100%">
+            </section>
+
+            <section>
+                <h3>Hlavní menu administrační konzole cssh</h3>
+                 <img src="./img/cssh_hosts.png" width="60%">
+            </section>
+
+            <section>
+                <h3>Příklad použití cssh</h3>
+<pre><code class="yaml">kayn@t460:~$ cssh --fillscreen --font '12x24' app0{1..3}.devel</code></pre>
             </section>
         </section>
 
