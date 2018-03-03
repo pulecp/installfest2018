@@ -7,10 +7,13 @@
 		<title>reveal.js</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/simple.css">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="lib/css/idea.css">
+
+		<!-- custom -->
+		<link rel="stylesheet" href="css/kayn.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -24,8 +27,464 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+        <section>
+            <h2>SSHáčkem paralelně</h2>
+            <h5>Pavel Pulec</h5>
+        </section>
+
+        <section>
+
+            <section>
+                <h2>O mně</h2>
+            </section>
+
+            <section>
+                <h3>Pavel Pulec</h3>
+                <ul>
+                    <li>linux administrátor @inuits.{cz,be,nl}</li>
+                    <li>Puppet, HA, MongoDB, GlusterFS, Jenkins, Icinga, ELK, RabbitMQ, Apache Storm, HAProxy, Apache, MySQL, ...</li>
+                    <li>kLfREE.net - síťový administrátor</li>
+                </ul>
+                <img src="./img/inuits_default_logo-nofont.svg" width="15%">
+            </section>
+
+        </section>
+
+        <section>
+            <section>
+                <h2>Proč?</h2>
+            </section>
+
+            <section>
+                <h3>Výhody</h3>
+                <ul>
+                    <li>jednoduchost</li>
+                    <li>rychlost</li>
+                    <li>efektivita</li>
+                    <li>konzistence</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Neýhody</h3>
+                <ul>
+                    <li>horší kontrola výstupu</li>
+                    <li>interakce</li>
+                    <li>snadná hromadná destrukce (reboot, firewall)</li>
+                    <li>odrazuje od použití standardních konfiguračních a orchestračních nástrojů</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Využití</h3>
+                <ul>
+                    <li>řešení náhlých situací</li>
+                    <li>spuštění konfiguračního nástroje (např. Puppet)</li>
+                    <li>ověření stavu (verze balíčků)</li>
+                    <li>nasazování/inicializace stacků</li>
+                    <li>čtení logů</li>
+                    <li>použití v automatizačních nástrojích (např. Jenkins)</li>
+                </ul>
+            </section>
+
+        </section>
+
+        <section>
+            <section>
+                <h3>Konfigurace SSH</h3>
+                <ul>
+                    <li>uživatelská konfigurace: ~/.ssh/config</li>
+                    <li>systemová (globální) konfigurace: /etc/ssh/ssh_config</li>
+                    <li>předdefinování parametrů pro každé SSH spojení</li>
+                    <li>individuální konfigurace podle vzorů</li>
+                    <li>jednoduché nastavení proxy/jump hosta</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Příklad konfigurace SSH a použití</h3>
+                    <h4>konfigurace</h4>
+<pre><code class="bash">kayn@t460:~$ cat ~/.ssh/config
+Host proxy_example
+  Hostname proxy.example.com
+  User kayn
+  LocalForward 8080 192.168.1.22:8080
+
+# example.com
+Host *.devel *.prod
+    ProxyCommand ssh proxy_example -W %h.example.com:%p
+
+Compression yes
+ServerAliveInterval 60
+IdentityFile ~/.ssh/id_rsa</code></pre>
+
+                    <h4>použití</h4>
+<pre><code class="bash">kayn@t460:~$ ssh web.devel
+Last login: Thu Mar  1 00:04:21 2018 from proxy.example.com
+[kayn@web.devel.example.com ~]$</code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h3>pssh - parallel ssh program</h3>
+                <ul>
+                    <li>neinteraktivní</li>
+                    <li>seznam hostů na příkazové řádce nebo v soboru</li>
+                    <li>v2.3.1 (2. 2. 2012)</li>
+                    <li>Python 2.4+</li>
+                    <li>psshlib - knihovna použitelná ve vlastní aplikaci</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>pssh - přepínače</h3>
+                <table>
+                  <thead><tr>
+                    <th>Parametr</th>
+                    <th>Vlastnost</th> 
+                  </tr></thead>
+                  <tbody><tr>
+                    <td>-h hosts.txt</td>
+                    <td>soubor se seznamem hostů</td> 
+                  </tr>
+                  <tr>
+                    <td>-p parallelism</td>
+                    <td>paralelismus</td> 
+                  </tr>
+                  <tr>
+                    <td>-t timeout</td>
+                    <td>defaultně 60 vteřin</td> 
+                  </tr>
+                  <tr>
+                    <td>-o outdir</td>
+                    <td>adresář pro soubory s výstupy</td>
+                  </tr>
+                  <tr>
+                    <td>-e errdir</td>
+                    <td>adresář pro soubory s chybovými výstupy</td> 
+                  </tr>
+                  <tr>
+                    <td>-A</td>
+                    <td>zeptá se na heslo pro přihlášení</td> 
+                  </tr>
+                  <tr>
+                    <td>-i</td>
+                    <td>výstup ke každému hostu</td> 
+                  </tr></tbody>
+                </table>
+            </section>
+
+            <section>
+                <h3>Příklad použití pssh</h3>
+                 <img src="./img/pssh.png" width="100%">
+            </section>
+
+            <section>
+                <h3>Protlačení hesla pro sudo - pssh</h3>
+<pre><code class="bash">read -s -p "sudo password: " SP; echo "$SP" | pssh -x'-tt' -I -h hosts -A "sudo -S sh -c 'yum clean all'"</code></pre>
+            </section>
+<!--
+            <section>
+                <h3>Příklad použití pssh</h3>
+<pre><code class="bash">kayn@t460:~$ pssh -A -t 7 -i -H "app01.devel app02.devel app03.devel" 'sleep $[ ( $RANDOM % 10 ) ];date'
+Warning: do not enter your password if anyone else has superuser
+privileges or access to your account.
+Password: 
+[1] 00:41:58 [SUCCESS] app02.devel
+Thu Mar  1 00:41:58 CET 2018
+[2] 00:42:01 [SUCCESS] app01.devel
+Thu Mar  1 00:42:01 CET 2018
+[3] 00:42:04 [FAILURE] app03.devel Timed out, Killed by signal 9</code></pre>
+            </section>
+-->
+
+            <section>
+                <h3>Rodina pssh</h3>
+                <ul>
+                    <li>pscp/parallel-scp - paralelní scp</li>
+                    <li>prsync/parallel-rsync - paralelní rsync</li>
+                    <li>pnuke/parallel-nuke - paralelní zabíjení procesů</li>
+                    <li>pslurp/parallel-slurp - paralelní kopírování z více serverů na jeden</li>
+                </ul>
+            </section>
+        </section>
+
+        <section>
+
+            <section>
+                <h3>Ansible</h3>
+                <ul>
+                    <li>konfigurační a orchestrační nástroj</li>
+                    <li>neinteraktivní</li>
+                    <li>podpora hesla pro příhlášení a hesla pro sudo (--ask-pass --ask-become-pass)</li>
+                    <li>pracuje pouze se souborem hostů (možnost dynamic inventory)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Ansible - přepínače</h3>
+                <table>
+                  <thead><tr>
+                    <th>Parametr</th>
+                    <th>Vlastnost</th> 
+                  </tr></thead>
+                  <tbody><tr>
+                    <td>-m MODULE_NAME, --module-name=MODULE_NAME</td>
+                    <td>název modulu, který se spustí</td> 
+                  </tr>
+                  <tr>
+                    <td>-a MODULE_ARGS, --args=MODULE_ARGS</td>
+                    <td>argumenty modulu</td> 
+                  </tr>
+                  <tr>
+                    <td>-f FORKS, --forks=FORKS</td>
+                    <td>paralelismus (standardně: 5)</td> 
+                  </tr>
+                  <tr>
+                    <td>-k, --ask-pass</td>
+                    <td>zadání hesla pro přihlášení</td>
+                  </tr>
+                  <tr>
+                    <td>-b, --become</td>
+                    <td>eskalace na jiného uživatele</td> 
+                  </tr>
+                  <tr>
+                    <td>-K, --ask-become-pass</td>
+                    <td>zadání hesla pro eskalaci</td> 
+                  </tr>
+                  <tr>
+                    <td>--become-method=BECOME_METHOD</td>
+                    <td>metoda eskalace práv (standardně sudo)</td> 
+                  </tr>
+                  <tr>
+                    <td>--become-user=BECOME_USER</td>
+                    <td>eskalace na konkrétního uživatele</td> 
+                  </tr></tbody>
+                </table>
+            </section>
+
+            <section>
+                <h3>1) Příklad použití Ansiblu - modul shell</h3>
+<pre><code class="bash">kayn@t460:~$ cat /etc/ansible/hosts 
+[app]
+app01.devel
+app02.devel
+app03.devel
+kayn@t460:~$ ansible app -m shell -a 'sleep $[ ( $RANDOM % 10 ) ];date' --ask-pass --become --ask-become-pass
+SSH password: 
+SUDO password[defaults to SSH password]:
+app03.devel | SUCCESS | rc=0 >>
+Fri Mar  2 08:35:36 CET 2018
+
+app01.devel | SUCCESS | rc=0 >>
+Fri Mar  2 08:35:37 CET 2018
+
+app02.devel | SUCCESS | rc=0 >>
+Fri Mar  2 08:35:39 CET 2018</code></pre>
+            </section>
+
+            <section>
+                <h3>2a) Příklad použití Ansiblu - playbook.yaml</h3>
+<pre><code class="yaml">kayn@t460:~$ cat playbook.yaml 
+---
+- hosts: all
+  tasks: 
+    - name: date
+      shell: date</code></pre>
+            </section>
+
+            <section>
+                <h3>2b) Příklad použití Ansiblu - ansible-playbook (2)</h3>
+<pre><code class="yaml">kayn@t460:~$ ansible-playbook playbook.yaml 
+
+PLAY [all] *********************************************************************
+
+TASK [setup] *******************************************************************
+ok: [app01.devel]
+ok: [app02.devel]
+ok: [app03.devel]
+
+TASK [date] ********************************************************************
+changed: [app02.devel]
+changed: [app01.devel]
+changed: [app03.devel]
+
+PLAY RECAP *********************************************************************
+app01.devel                : ok=2    changed=1    unreachable=0    failed=0   
+app02.devel                : ok=2    changed=1    unreachable=0    failed=0   
+app03.devel                : ok=2    changed=1    unreachable=0    failed=0</code></pre>
+            </section>
+
+            <section>
+                <h3>3a) Příklad použití Ansiblu - retry</h3>
+<pre><code class="yaml">kayn@t460:~$ cat playbook-fail.yaml
+---
+- hosts: app01.devel
+  tasks: 
+    - name: fail
+      shell: /bin/false</code></pre>
+            </section>
+
+            <section>
+                <h3>3b) Příklad použití Ansiblu - retry</h3>
+<pre><code class="yaml">kayn@t460:~$ ansible-playbook playbook-fail.yaml 
+
+PLAY [app01.devel] *************************************************************
+
+TASK [setup] *******************************************************************
+ok: [app01.devel]
+
+TASK [fail] ********************************************************************
+fatal: [app01.devel]: FAILED! => {"changed": true, "cmd": "/bin/false", "delta": "0:00:00.003754", "end": "2018-03-02 22:36:38.319095", "failed": true, "rc": 1, "start": "2018-03-02 22:36:38.315341", "stderr": "", "stdout": "", "stdout_lines": [], "warnings": []}
+	to retry, use: --limit @/home/kayn/playbook-fail.retry
+
+PLAY RECAP *********************************************************************
+app01.devel                : ok=1    changed=0    unreachable=0    failed=1</code></pre>
+            </section>
+
+            <section>
+                <h3>3c) Příklad použití Ansiblu - retry</h3>
+<pre><code class="yaml">kayn@t460:~$ cat playbook-fail.retry 
+app01.devel
+kayn@t460:~$
+kayn@t460:~$ ansible-playbook playbook.yaml --limit @/home/kayn/playbook-fail.retry
+
+PLAY [all] *********************************************************************
+
+TASK [setup] *******************************************************************
+ok: [app01.devel]
+
+TASK [date] ********************************************************************
+changed: [app01.devel]
+
+PLAY RECAP *********************************************************************
+app01.devel                : ok=2    changed=1    unreachable=0    failed=0</code></pre>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h3>cssh - Cluster administration tool</h3>
+                <ul>
+                    <li>plně interaktivní</li>
+                    <li>administrativní konzole + xterm pro každého hosta</li>
+                    <li>ovládání všech, výběru či jednotlivých hostů</li>
+                    <li>nevhodný při použití velkého množství hostů</li>
+                    <li>možnost vkládání ze schránky</li>
+                    <li>definice hostů (~/.clusterssh/clusters nebo /etc/clusters)</li>
+                    <li>v4.13 (27. 12. 2017)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Admnistrační konzole a xtermy cssh</h3>
+                 <img src="./img/cssh.png" width="100%">
+            </section>
+
+            <section>
+                <h3>Hlavní menu administrační konzole cssh</h3>
+                 <img src="./img/cssh_hosts.png" width="60%">
+            </section>
+
+            <section>
+                <h3>Příklad použití cssh</h3>
+<pre><code class="yaml">kayn@t460:~$ cssh --fillscreen --font '12x24' app0{1..3}.devel</code></pre>
+            </section>
+
+        </section>
+
+
+        <section>
+            <section>
+                <h3>pdsh</h3>
+                <ul>
+                    <li>varianta rsh (remote shell client)</li>
+                    <li>rcmd moduly - ssh, exec, rsh...</li>
+                    <li>přihlášení pouze s SSH klíčem</li>
+                    <li>interaktivní - pdsh konzole</li>
+                    <li>podpora genderových databází</li>
+                    <li>v2.33 (28. 6. 2017)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Příklad použití pdsh</h3>
+<pre><code class="bash">kayn@t460:~$ pdsh -w web0[1-3].devel 'hostname;uptime'
+web03: web03.devel.example.com
+web03:  23:39:37 up 44 days,  1:20,  0 users,  load average: 0.76, 0.98, 1.00
+web01: web01.devel.example.com
+web01:  23:39:37 up 44 days,  1:20,  0 users,  load average: 2.39, 2.38, 2.40
+web02: web02.devel.example.com
+web02:  23:39:37 up 44 days, 13:42,  0 users,  load average: 1.15, 1.33, 1.39</code></pre>
+            </section>
+
+            <section>
+                <h3>Příklad použití pdsh - interaktivně</h3>
+<pre><code class="bash">kayn@t460:~$ pdsh -w web01.devel,web02.devel
+pdsh>
+pdsh> ping -c1 installfest.cz
+web01: PING installfest.cz (147.32.30.201) 56(84) bytes of data.
+web02: PING installfest.cz (147.32.30.201) 56(84) bytes of data.
+web01: 64 bytes from www.blokovehry.sh.cvut.cz (147.32.30.201): icmp_seq=1 ttl=54 time=18.3 ms
+web02: 64 bytes from gc-old.siliconhill.cz (147.32.30.201): icmp_seq=1 ttl=54 time=18.1 ms
+web02: 
+web02: --- installfest.cz ping statistics ---
+web02: 1 packets transmitted, 1 received, 0% packet loss, time 0ms
+web02: rtt min/avg/max/mdev = 18.170/18.170/18.170/0.000 ms
+web01: 
+web01: --- installfest.cz ping statistics ---
+web01: 1 packets transmitted, 1 received, 0% packet loss, time 0ms
+web01: rtt min/avg/max/mdev = 18.303/18.303/18.303/0.000 ms
+pdsh></code></pre>
+            </section>
+
+            <section>
+                <h3>Příklad použití pdsh s dshbak</h3>
+<pre><code class="bash">kayn@t460:~$ pdsh -w web01.devel,web02.devel 'ping -c1 installfest.cz' | dshbak 
+----------------
+web01
+----------------
+PING installfest.cz (147.32.30.201) 56(84) bytes of data.
+64 bytes from volby.sh.cvut.cz (147.32.30.201): icmp_seq=1 ttl=54 time=18.3 ms
+
+--- installfest.cz ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 18.357/18.357/18.357/0.000 ms
+----------------
+web02
+----------------
+PING installfest.cz (147.32.30.201) 56(84) bytes of data.
+64 bytes from gc-old.sh.cvut.cz (147.32.30.201): icmp_seq=1 ttl=54 time=18.4 ms
+
+--- installfest.cz ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 18.470/18.470/18.470/0.000 ms</code></pre>
+            </section>
+        </section>
+
+
+        <section>
+            <h3>Dotazy?</h3>
+            <ul>
+                <li>slajdy: <a href="https://pulecp.github.io/installfest2018">https://pulecp.github.io/installfest2018</a></li>
+                <li>kayn@inuits.cz</li>
+                <li>Děkuji za pozornost!</li>
+            </ul>
+            <img src="./img/inuits_default_logo-nofont.svg" width="10%">
+        </section>
+
+        <section>
+            <h3>Zdroje</h3>
+            <ul>
+                <li><a href="https://www.ssh.com/ssh/config/">https://www.ssh.com/ssh/config/</a></li>
+                <li><a href="https://github.com/lilydjwg/pssh">https://github.com/lilydjwg/pssh</a></li>
+                <li><a href="http://docs.ansible.com/">http://docs.ansible.com/</a></li>
+                <li><a href="https://github.com/duncs/clusterssh">https://github.com/duncs/clusterssh</a></li>
+                <li><a href="https://github.com/chaos/pdsh">https://github.com/chaos/pdsh</a></li>
+            </ul>
+        </section>
+
 			</div>
 		</div>
 
@@ -37,6 +496,13 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+
+        width: "90%",
+        height: "90%",
+        margin: 0.1,
+        minScale: 1,
+        maxScale: 1,
+
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
