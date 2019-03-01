@@ -1,4 +1,4 @@
-## slides: https://pulecp.github.io/installfest2018
+## slides: https://pulecp.github.io/installfest2018/
 
 
 ---
